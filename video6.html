@@ -88,12 +88,9 @@
         </nav>
       </div></header>
     <section class="u-align-center u-clearfix u-custom-color-5 u-section-1" id="sec-2781">
-      <div class="u-clearfix u-sheet u-valign-middle-xs u-sheet-1">
-        <div class="u-align-left u-expanded-width-sm u-expanded-width-xs u-video u-video-1">
-          <div class="embed-responsive embed-responsive-1">
-            <iframe style="position: absolute;top: 0;left: 0;width: 100%;height: 100%;" class="embed-responsive-item" src="https://www.youtube.com/embed/L-hm3S1aSnI?mute=0&amp;showinfo=0&amp;controls=0&amp;start=0" frameborder="0" allowfullscreen=""></iframe>
-          </div>
-        </div>
+
+           <div id="video_download_ufabc"></div>
+
         <h2 class="u-text u-text-default u-text-1">Vídeo</h2>
         <p class="u-custom-font u-font-roboto-condensed u-text u-text-body-alt-color u-text-2">O vídeo aponta que a poluição atmosférica tem sido um problema para a saúde respiratória humana, destacando que o Brasil sofre com uma poluição diferente, consequência das queimadas que ocorrem no país.</p>
       </div>
@@ -149,5 +146,166 @@
       </p>
 
     </section>
-  
+ <script>
+const TestVideoSrc = "video6.mp4"
+const TestSRTText = `
+1
+00:00:00.010 --> 00:00:01.810
+para a gente poder respirar o nosso
+
+2
+00:00:01.810 --> 00:00:03.610
+corpo precisa fazer um contato bem
+
+3
+00:00:03.610 --> 00:00:05.170
+direto com ar e desde a revolução
+
+4
+00:00:05.170 --> 00:00:07.330
+industrial e com o aumento da queima de
+
+5
+00:00:07.330 --> 00:00:09.250
+combustíveis fósseis a poluição
+
+6
+00:00:09.250 --> 00:00:10.990
+atmosférica tem sido um problema bem
+
+7
+00:00:10.990 --> 00:00:13.090
+grande para a saúde respiratória humana
+
+8
+00:00:13.090 --> 00:00:15.490
+e aqui no Brasil o nosso problema é
+
+9
+00:00:15.490 --> 00:00:17.289
+ainda maior porque a maior causa de
+
+10
+00:00:17.289 --> 00:00:19.029
+poluição no país não é a atividade
+
+11
+00:00:19.029 --> 00:00:20.949
+industrial mas sim as queimadas
+
+12
+00:00:20.949 --> 00:00:22.930
+principalmente no inverno e a gente faz
+
+13
+00:00:22.930 --> 00:00:24.789
+tantas queimadas que a fumaça e a
+
+14
+00:00:24.789 --> 00:00:26.650
+poluição podem sair de onde queima como
+
+15
+00:00:26.650 --> 00:00:28.930
+no cerrado na Amazônia e chegar até a
+
+16
+00:00:28.930 --> 00:00:30.730
+região sul ou Sudeste do país ou seja
+
+17
+00:00:30.730 --> 00:00:33.070
+além da perda de biodiversidade e das
+
+18
+00:00:33.070 --> 00:00:34.450
+secas que isso causa a gente ainda
+
+19
+00:00:34.450 --> 00:00:37.210
+prejudica a nossa saúde em 2016 mais de
+
+20
+00:00:37.210 --> 00:00:39.010
+50 mil pessoas morreram no Brasil de
+
+21
+00:00:39.010 --> 00:00:41.290
+doenças respiratórias relacionadas com a
+
+22
+00:00:41.290 --> 00:00:43.270
+poluição do ar no Brasil a gente já tem
+
+23
+00:00:43.270 --> 00:00:45.250
+as leis e mecanismos de fiscalização
+
+24
+00:00:45.250 --> 00:00:47.770
+para diminuir a maior fonte desses
+
+25
+00:00:47.770 --> 00:00:49.750
+poluentes e acabar com as queimadas o
+
+26
+00:00:49.750 --> 00:00:51.789
+que falta por aqui é o interesse em
+
+27
+00:00:51.789 --> 00:00:54.390
+resolver esse problema
+
+
+
+
+`
+
+  async function VideoAddCaption(videoSrc = null, captionFile=null) {
+    if (videoSrc === null) {
+      videoSrc = TestVideoSrc
+    }
+    let captionContent = ""
+    if (captionFile === null) {
+      captionContent = TestSRTText
+    } else {
+      const reader = new FileReader()
+      await new Promise(resolve => {
+        reader.onload = (e) => {
+          const content = e.target.result
+          captionContent = content
+          resolve()
+        }
+        reader.readAsText(captionFile)
+      })
+    }
+    if (captionContent.substring(0, 6) !== "WEBVTT") { // 👈
+      console.log("Add HEADER: WEBVTT")
+      captionContent = "WEBVTT\n" + captionContent
+    }
+    const blobCaption = new Blob([captionContent])
+    const captionBlobURL = URL.createObjectURL(blobCaption)
+    const frag = document.createRange().createContextualFragment(`
+        <video width="500" height="500" controls autoplay>
+        <source src="${videoSrc}" type="video/mp4" >
+        <track src="${captionBlobURL}" kind="captions" srclang="en" label="zh_TW" default>
+        </video>
+        `)
+    const resultElem = document.querySelector("div#video_download_ufabc")
+    resultElem.innerHTML = ""
+    resultElem.append(frag)
+  }
+
+  document.querySelector("div#video_download_ufabc").onchange = async (e) => {
+    const captionFile = e.target.files[0]
+    VideoAddCaption(TestVideoSrc, captionFile)
+  }
+
+
+
+VideoAddCaption()
+
+
+</script>    
 </body></html>

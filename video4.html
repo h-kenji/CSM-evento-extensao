@@ -88,12 +88,9 @@
         </nav>
       </div></header>
     <section class="u-align-center u-clearfix u-custom-color-5 u-section-1" id="sec-2781">
-      <div class="u-clearfix u-sheet u-valign-middle-xs u-sheet-1">
-        <div class="u-align-left u-expanded-width-sm u-expanded-width-xs u-video u-video-1">
-          <div class="embed-responsive embed-responsive-1">
-            <iframe style="position: absolute;top: 0;left: 0;width: 100%;height: 100%;" class="embed-responsive-item" src="https://www.youtube.com/embed/L-hm3S1aSnI?mute=0&amp;showinfo=0&amp;controls=0&amp;start=0" frameborder="0" allowfullscreen=""></iframe>
-          </div>
-        </div>
+
+     <div id="video_download_ufabc"></div>
+
         <h2 class="u-text u-text-default u-text-1">Vídeo</h2>
         <p class="u-custom-font u-font-roboto-condensed u-text u-text-body-alt-color u-text-2">O vídeo é informativo mostra de forma clara a importância das árvores da Amazônia para o clima do Brasil inteiro. As árvores da Amazônia ajudam a regular o clima, controlando a temperatura e a umidade.</p>
       </div>
@@ -149,5 +146,164 @@
       </p>
 
     </section>
-  
+  <script>
+const TestVideoSrc = "video4.mp4"
+const TestSRTText = `
+1
+00:00:00.000 --> 00:00:02.340
+as árvores ajudam a transportar a água
+
+2
+00:00:02.340 --> 00:00:04.259
+que as raízes absorvem para a atmosfera
+
+3
+00:00:04.259 --> 00:00:06.480
+pelas folhas uma floresta grande pode
+
+4
+00:00:06.480 --> 00:00:08.340
+influenciar até o regime de chuvas Então
+
+5
+00:00:08.340 --> 00:00:10.080
+você sabia que o desmatamento da
+
+6
+00:00:10.080 --> 00:00:11.940
+Amazônia pode estar causando secas que
+
+7
+00:00:11.940 --> 00:00:14.639
+impactam o Brasil inteiro as nuvens que
+
+8
+00:00:14.639 --> 00:00:16.680
+são transportadas pelas correntes de ar
+
+9
+00:00:16.680 --> 00:00:19.380
+da Amazônia pro sul do Brasil carregam o
+
+10
+00:00:19.380 --> 00:00:20.699
+volume de água equivalente do Rio
+
+11
+00:00:20.699 --> 00:00:22.800
+Amazonas por isso elas são chamadas de
+
+12
+00:00:22.800 --> 00:00:25.080
+rios voadores e essa umidade influencia
+
+13
+00:00:25.080 --> 00:00:26.519
+o regime de chuvas em toda a região
+
+14
+00:00:26.519 --> 00:00:28.740
+centro-sul do Brasil essa falta de
+
+15
+00:00:28.740 --> 00:00:31.260
+chuvas não impacta só a agricultura com
+
+16
+00:00:31.260 --> 00:00:32.759
+a seca também falta água para o
+
+17
+00:00:32.759 --> 00:00:34.920
+reservatório das hidrelétricas fazerem
+
+18
+00:00:34.920 --> 00:00:37.079
+energia elétrica que fica mais caro em
+
+19
+00:00:37.079 --> 00:00:39.840
+2021 o preço da energia mais do que
+
+20
+00:00:39.840 --> 00:00:42.360
+dobrou com aumento de 130% na conta de
+
+21
+00:00:42.360 --> 00:00:44.100
+luz o que acaba aumentando o preço de
+
+22
+00:00:44.100 --> 00:00:45.899
+vários outros produtos por tabela É
+
+23
+00:00:45.899 --> 00:00:47.579
+triste a gente pensar que no país com
+
+24
+00:00:47.579 --> 00:00:49.500
+uma das maiores reservas de água doce do
+
+25
+00:00:49.500 --> 00:00:51.840
+mundo e uma das maiores florestas a
+
+26
+00:00:51.840 --> 00:00:54.239
+gente sofre com a falta de água por não
+
+27
+00:00:54.239 --> 00:00:57.680
+saber cuidar desses recursos
+
+
+`
+
+  async function VideoAddCaption(videoSrc = null, captionFile=null) {
+    if (videoSrc === null) {
+      videoSrc = TestVideoSrc
+    }
+    let captionContent = ""
+    if (captionFile === null) {
+      captionContent = TestSRTText
+    } else {
+      const reader = new FileReader()
+      await new Promise(resolve => {
+        reader.onload = (e) => {
+          const content = e.target.result
+          captionContent = content
+          resolve()
+        }
+        reader.readAsText(captionFile)
+      })
+    }
+    if (captionContent.substring(0, 6) !== "WEBVTT") { // 👈
+      console.log("Add HEADER: WEBVTT")
+      captionContent = "WEBVTT\n" + captionContent
+    }
+    const blobCaption = new Blob([captionContent])
+    const captionBlobURL = URL.createObjectURL(blobCaption)
+    const frag = document.createRange().createContextualFragment(`
+        <video width="500" height="500" controls autoplay>
+        <source src="${videoSrc}" type="video/mp4" >
+        <track src="${captionBlobURL}" kind="captions" srclang="en" label="zh_TW" default>
+        </video>
+        `)
+    const resultElem = document.querySelector("div#video_download_ufabc")
+    resultElem.innerHTML = ""
+    resultElem.append(frag)
+  }
+
+  document.querySelector("div#video_download_ufabc").onchange = async (e) => {
+    const captionFile = e.target.files[0]
+    VideoAddCaption(TestVideoSrc, captionFile)
+  }
+
+
+
+VideoAddCaption()
+
+
+</script>  
 </body></html>

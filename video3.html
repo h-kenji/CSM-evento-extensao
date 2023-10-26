@@ -88,12 +88,9 @@
         </nav>
       </div></header>
     <section class="u-align-center u-clearfix u-custom-color-5 u-section-1" id="sec-2781">
-      <div class="u-clearfix u-sheet u-valign-middle-xs u-sheet-1">
-        <div class="u-align-left u-expanded-width-sm u-expanded-width-xs u-video u-video-1">
-          <div class="embed-responsive embed-responsive-1">
-            <iframe style="position: absolute;top: 0;left: 0;width: 100%;height: 100%;" class="embed-responsive-item" src="https://od.lk/s/M18yOTU4NjY5MTBf/Sabemos%20a%20causa%20e%20a%20solu%C3%A7%C3%A3o%20do%20aquecimento%20global.mp4mute=0&amp;showinfo=0&amp;controls=0&amp;start=0" frameborder="0" allowfullscreen=""></iframe>
-          </div>
-        </div>
+     
+ <div id="video_download_ufabc"></div>
+
         <h2 class="u-text u-text-default u-text-1">Vídeo</h2>
         <p class="u-custom-font u-font-roboto-condensed u-text u-text-body-alt-color u-text-2">No vídeo, são abordados os desafios críticos associados ao aquecimento global, destacando o aumento das temperaturas e eventos climáticos extremos. O vídeo enfatiza a urgência de ações globais para combater as mudanças climáticas.  Além disso, o vídeo explora os estudos do Painel Intergovernamental sobre Mudanças Climáticas (IPCC) e como eles fornecem evidências científicas sólidas sobre o impacto humano no clima e as projeções para o futuro.</p>
       </div>
@@ -149,5 +146,179 @@
       </p>
 
     </section>
-  
+    <script>
+const TestVideoSrc = "video3.mp4"
+const TestSRTText = `
+
+1
+00:00:00.000 --> 00:00:01.920
+um dos maiores desafios da nossa geração
+
+2
+00:00:01.920 --> 00:00:04.019
+e das Gerações futuras vai ser como
+
+3
+00:00:04.019 --> 00:00:05.759
+lidar com o aquecimento global e com as
+
+4
+00:00:05.759 --> 00:00:07.919
+mudanças climáticas que vem junto dele e
+
+5
+00:00:07.919 --> 00:00:10.500
+ainda tem quem diga se somos nós mesmo
+
+6
+00:00:10.500 --> 00:00:12.300
+humanos que estamos causando Esse
+
+7
+00:00:12.300 --> 00:00:14.099
+aumento na temperatura do planeta só que
+
+8
+00:00:14.099 --> 00:00:16.260
+o fato é que o aquecimento global é um
+
+9
+00:00:16.260 --> 00:00:18.539
+consenso entre cientistas de várias
+
+10
+00:00:18.539 --> 00:00:21.300
+áreas do clima e desde 1988 a gente tem
+
+11
+00:00:21.300 --> 00:00:23.039
+um grupo internacional ligado a ONU que
+
+12
+00:00:23.039 --> 00:00:24.900
+pesquise e estuda mudanças climáticas
+
+13
+00:00:24.900 --> 00:00:26.640
+que é o ipcc e a partir de modelos
+
+14
+00:00:26.640 --> 00:00:29.279
+climáticos e PCC já descreveu Como podem
+
+15
+00:00:29.279 --> 00:00:31.320
+ser vários cenários de mudança de
+
+16
+00:00:31.320 --> 00:00:33.480
+temperatura conforme a gente muda a
+
+17
+00:00:33.480 --> 00:00:35.280
+quantidade de gases de efeito estufa que
+
+18
+00:00:35.280 --> 00:00:36.960
+nós emitimos se a gente continuar Nesse
+
+19
+00:00:36.960 --> 00:00:39.180
+Ritmo atual sem mudar nada o planeta
+
+20
+00:00:39.180 --> 00:00:41.040
+pode ficar de quatro a sete graus mais
+
+21
+00:00:41.040 --> 00:00:42.899
+quente até 2.100 se a gente limitar
+
+22
+00:00:42.899 --> 00:00:44.760
+bastante as emissões conseguiríamos
+
+23
+00:00:44.760 --> 00:00:47.640
+segurar o aumento em até 1°c só tem que
+
+24
+00:00:47.640 --> 00:00:49.500
+cogitar os piores cenários e saber que a
+
+25
+00:00:49.500 --> 00:00:50.940
+gente segue no caminho deles é um
+
+26
+00:00:50.940 --> 00:00:53.100
+absurdo porque a gente sabe a causa sabe
+
+27
+00:00:53.100 --> 00:00:55.260
+o cenários que podem acontecer e o pior
+
+28
+00:00:55.260 --> 00:00:56.879
+a gente sabe o que devemos fazer agora
+
+29
+00:00:56.879 --> 00:00:59.160
+para evitar essa catástrofe enquanto
+
+30
+00:00:59.160 --> 00:01:01.640
+ainda dá tempo
+
+
+
+`
+
+  async function VideoAddCaption(videoSrc = null, captionFile=null) {
+    if (videoSrc === null) {
+      videoSrc = TestVideoSrc
+    }
+    let captionContent = ""
+    if (captionFile === null) {
+      captionContent = TestSRTText
+    } else {
+      const reader = new FileReader()
+      await new Promise(resolve => {
+        reader.onload = (e) => {
+          const content = e.target.result
+          captionContent = content
+          resolve()
+        }
+        reader.readAsText(captionFile)
+      })
+    }
+    if (captionContent.substring(0, 6) !== "WEBVTT") { // 👈
+      console.log("Add HEADER: WEBVTT")
+      captionContent = "WEBVTT\n" + captionContent
+    }
+    const blobCaption = new Blob([captionContent])
+    const captionBlobURL = URL.createObjectURL(blobCaption)
+    const frag = document.createRange().createContextualFragment(`
+        <video width="500" height="500" controls autoplay>
+        <source src="${videoSrc}" type="video/mp4" >
+        <track src="${captionBlobURL}" kind="captions" srclang="en" label="zh_TW" default>
+        </video>
+        `)
+    const resultElem = document.querySelector("div#video_download_ufabc")
+    resultElem.innerHTML = ""
+    resultElem.append(frag)
+  }
+
+  document.querySelector("div#video_download_ufabc").onchange = async (e) => {
+    const captionFile = e.target.files[0]
+    VideoAddCaption(TestVideoSrc, captionFile)
+  }
+
+
+
+VideoAddCaption()
+
+
+</script>
+
 </body></html>

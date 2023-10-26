@@ -88,12 +88,9 @@
         </nav>
       </div></header>
     <section class="u-align-center u-clearfix u-custom-color-5 u-section-1" id="sec-2781">
-      <div class="u-clearfix u-sheet u-valign-middle-xs u-sheet-1">
-        <div class="u-align-left u-expanded-width-sm u-expanded-width-xs u-video u-video-1">
-          <div class="embed-responsive embed-responsive-1">
-            <iframe style="position: absolute;top: 0;left: 0;width: 100%;height: 100%;" class="embed-responsive-item" src="https://www.youtube.com/embed/L-hm3S1aSnI?mute=0&amp;showinfo=0&amp;controls=0&amp;start=0" frameborder="0" allowfullscreen=""></iframe>
-          </div>
-        </div>
+     
+     <div id="video_download_ufabc"></div>
+    
         <h2 class="u-text u-text-default u-text-1">Vídeo</h2>
         <p class="u-custom-font u-font-roboto-condensed u-text u-text-body-alt-color u-text-2">Você sabia que um acordo de mercado de compra de soja, envolvendo até satélites, ajudou a reduzir o desmatamento da Amazônia? Conheça mais sobre a Moratória da Soja. </p>
       </div>
@@ -149,5 +146,170 @@
       </p>
 
     </section>
-  
+  <script>
+const TestVideoSrc = "video2.mp4"
+const TestSRTText = `
+
+1
+00:00:00.000 --> 00:00:02.040
+você sabia que um acordo de mercado de
+
+2
+00:00:02.040 --> 00:00:04.319
+compra de soja que envolve até satélites
+
+3
+00:00:04.319 --> 00:00:06.299
+ajudou a reduzir o desmatamento da
+
+4
+00:00:06.299 --> 00:00:09.240
+Amazônia lá em 2006 ONGs convenceram os
+
+5
+00:00:09.240 --> 00:00:10.800
+principais compradores de soja do mundo
+
+6
+00:00:10.800 --> 00:00:13.440
+a não comprarem soja brasileira que
+
+7
+00:00:13.440 --> 00:00:16.139
+viesse de áreas desmatadas da Amazônia o
+
+8
+00:00:16.139 --> 00:00:18.300
+acordo ficou conhecido como moratória da
+
+9
+00:00:18.300 --> 00:00:21.539
+soja antes dele quase três em cada dez
+
+10
+00:00:21.539 --> 00:00:23.640
+novas áreas de produção de soja eram
+
+11
+00:00:23.640 --> 00:00:25.980
+regiões recentes matadas para fazer o
+
+12
+00:00:25.980 --> 00:00:27.660
+plantio depois desse acordo o número
+
+13
+00:00:27.660 --> 00:00:30.119
+caiu para menos de uma ou perto de zero
+
+14
+00:00:30.119 --> 00:00:32.159
+horas ou seja ao invés de derrubar uma
+
+15
+00:00:32.159 --> 00:00:34.440
+nova região preservada os produtores de
+
+16
+00:00:34.440 --> 00:00:35.760
+soja começaram a buscar áreas que já
+
+17
+00:00:35.760 --> 00:00:37.260
+estavam desmatadas para fazer plantio
+
+18
+00:00:37.260 --> 00:00:39.239
+senão não teriam para quem vender essa
+
+19
+00:00:39.239 --> 00:00:41.040
+soja e todo mundo saiu ganhando e o
+
+20
+00:00:41.040 --> 00:00:43.020
+satélites do governo brasileiro entram
+
+21
+00:00:43.020 --> 00:00:44.700
+nesse acordo fornecendo as imagens que
+
+22
+00:00:44.700 --> 00:00:46.920
+são usadas para certificar que aquela
+
+23
+00:00:46.920 --> 00:00:49.260
+soja não teve origem em áreas desmatadas
+
+24
+00:00:49.260 --> 00:00:51.600
+amor a Vitória da soja é um exemplo de
+
+25
+00:00:51.600 --> 00:00:54.000
+que é possível produzir sem desmatar
+
+26
+00:00:54.000 --> 00:00:56.640
+ainda mais as nossas florestas quando se
+
+27
+00:00:56.640 --> 00:00:58.680
+tem incentivo políticas públicas e
+
+28
+00:00:58.680 --> 00:01:01.399
+pressão de mercado
+
+
+`
+
+  async function VideoAddCaption(videoSrc = null, captionFile=null) {
+    if (videoSrc === null) {
+      videoSrc = TestVideoSrc
+    }
+    let captionContent = ""
+    if (captionFile === null) {
+      captionContent = TestSRTText
+    } else {
+      const reader = new FileReader()
+      await new Promise(resolve => {
+        reader.onload = (e) => {
+          const content = e.target.result
+          captionContent = content
+          resolve()
+        }
+        reader.readAsText(captionFile)
+      })
+    }
+    if (captionContent.substring(0, 6) !== "WEBVTT") { // 👈
+      console.log("Add HEADER: WEBVTT")
+      captionContent = "WEBVTT\n" + captionContent
+    }
+    const blobCaption = new Blob([captionContent])
+    const captionBlobURL = URL.createObjectURL(blobCaption)
+    const frag = document.createRange().createContextualFragment(`
+        <video width="500" height="500" controls autoplay>
+        <source src="${videoSrc}" type="video/mp4" >
+        <track src="${captionBlobURL}" kind="captions" srclang="en" label="zh_TW" default>
+        </video>
+        `)
+    const resultElem = document.querySelector("div#video_download_ufabc")
+    resultElem.innerHTML = ""
+    resultElem.append(frag)
+  }
+
+  document.querySelector("div#video_download_ufabc").onchange = async (e) => {
+    const captionFile = e.target.files[0]
+    VideoAddCaption(TestVideoSrc, captionFile)
+  }
+
+
+
+VideoAddCaption()
+
+
+</script>
+
 </body></html>

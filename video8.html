@@ -88,12 +88,10 @@
         </nav>
       </div></header>
     <section class="u-align-center u-clearfix u-custom-color-5 u-section-1" id="sec-2781">
-      <div class="u-clearfix u-sheet u-valign-middle-xs u-sheet-1">
-        <div class="u-align-left u-expanded-width-sm u-expanded-width-xs u-video u-video-1">
-          <div class="embed-responsive embed-responsive-1">
-            <iframe style="position: absolute;top: 0;left: 0;width: 100%;height: 100%;" class="embed-responsive-item" src="https://www.youtube.com/embed/L-hm3S1aSnI?mute=0&amp;showinfo=0&amp;controls=0&amp;start=0" frameborder="0" allowfullscreen=""></iframe>
-          </div>
-        </div>
+
+       <div id="video_download_ufabc"></div>
+
+
         <h2 class="u-text u-text-default u-text-1">Vídeo</h2>
         <p class="u-custom-font u-font-roboto-condensed u-text u-text-body-alt-color u-text-2">O vídeo aponta detalhes sobre o novo projeto de um pneu capaz de rodar até 500 mil km, o que seria uma vida útil 10x maior do que a de um pneu comum.</p>
       </div>
@@ -149,5 +147,136 @@
       </p>
 
     </section>
-  
+  <script>
+const TestVideoSrc = "video8.mp4"
+const TestSRTText = `
+1
+00:00:00.000 --> 00:00:02.580
+a Goodyear apresentou o modelo de pneu
+
+2
+00:00:02.580 --> 00:00:05.940
+com 90% de materiais sustentáveis em sua
+
+3
+00:00:05.940 --> 00:00:08.340
+composição o produto já passou por todos
+
+4
+00:00:08.340 --> 00:00:10.500
+os testes para circular nas ruas e
+
+5
+00:00:10.500 --> 00:00:12.179
+estradas e deve estar disponível
+
+6
+00:00:12.179 --> 00:00:15.000
+comercialmente ainda neste ano Ao todo
+
+7
+00:00:15.000 --> 00:00:17.760
+são 17 ingredientes utilizados na
+
+8
+00:00:17.760 --> 00:00:20.460
+fabricação o novo pneu apresenta quatro
+
+9
+00:00:20.460 --> 00:00:22.800
+tipos de carbono que são produzidos a
+
+10
+00:00:22.800 --> 00:00:24.600
+partir de matérias-primas de metano
+
+11
+00:00:24.600 --> 00:00:27.599
+dióxido de carbono óleo vegetal e óleo
+
+12
+00:00:27.599 --> 00:00:30.060
+de pirólise segundo a empresa Essas
+
+13
+00:00:30.060 --> 00:00:32.420
+tecnologias visam emissões reduzidas
+
+14
+00:00:32.420 --> 00:00:35.100
+circularidade e o uso de carbonos de
+
+15
+00:00:35.100 --> 00:00:37.020
+base biológica ao mesmo tempo em que
+
+16
+00:00:37.020 --> 00:00:39.239
+oferecem melhor desempenho a estimativa
+
+17
+00:00:39.239 --> 00:00:42.059
+é que ele seja capaz de rodar até 500
+
+18
+00:00:42.059 --> 00:00:45.660
+mil km muito acima do 60.000 km de vida
+
+19
+00:00:45.660 --> 00:00:48.860
+útil dos tradicionais
+
+
+
+
+
+
+`
+
+  async function VideoAddCaption(videoSrc = null, captionFile=null) {
+    if (videoSrc === null) {
+      videoSrc = TestVideoSrc
+    }
+    let captionContent = ""
+    if (captionFile === null) {
+      captionContent = TestSRTText
+    } else {
+      const reader = new FileReader()
+      await new Promise(resolve => {
+        reader.onload = (e) => {
+          const content = e.target.result
+          captionContent = content
+          resolve()
+        }
+        reader.readAsText(captionFile)
+      })
+    }
+    if (captionContent.substring(0, 6) !== "WEBVTT") { // 👈
+      console.log("Add HEADER: WEBVTT")
+      captionContent = "WEBVTT\n" + captionContent
+    }
+    const blobCaption = new Blob([captionContent])
+    const captionBlobURL = URL.createObjectURL(blobCaption)
+    const frag = document.createRange().createContextualFragment(`
+        <video width="500" height="500" controls autoplay>
+        <source src="${videoSrc}" type="video/mp4" >
+        <track src="${captionBlobURL}" kind="captions" srclang="en" label="zh_TW" default>
+        </video>
+        `)
+    const resultElem = document.querySelector("div#video_download_ufabc")
+    resultElem.innerHTML = ""
+    resultElem.append(frag)
+  }
+
+  document.querySelector("div#video_download_ufabc").onchange = async (e) => {
+    const captionFile = e.target.files[0]
+    VideoAddCaption(TestVideoSrc, captionFile)
+  }
+
+
+
+VideoAddCaption()
+
+
+</script>      
 </body></html>

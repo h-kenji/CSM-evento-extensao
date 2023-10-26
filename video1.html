@@ -1,4 +1,118 @@
 <!DOCTYPE html>
+
+<script>
+  const TestVideoSrc = "video1.mp4"
+  const TestSRTText = `
+
+1
+00:00:00.000 --> 00:00:02.190
+<b>Quando você pensa em sustentabilidade</b>
+
+2
+00:00:02.190 --> 00:00:04.560
+<b>o que vem na sua cabeça?</b>
+
+3
+00:00:04.560 --> 00:00:05.879
+<b>sustentabilidade é o equilíbrio entre o que a gente precisa</b>
+
+4
+00:00:05.879 --> 00:00:08.130
+<b>para viver em sociedade e o respeito aos</b>
+
+5
+00:00:08.130 --> 00:00:09.960
+<b>recursos naturais do planeta e para</b>
+
+6
+00:00:09.960 --> 00:00:11.730
+<b>chegar lá tem três fatores que precisam</b>
+
+7
+00:00:11.730 --> 00:00:15.240
+<b>andar em sintonia o social ambiental e</b>
+
+8
+00:00:15.240 --> 00:00:17.550
+<b>econômico na visão da indústria que o</b>
+
+9
+00:00:17.550 --> 00:00:19.890
+<b>Brasil ser cada vez mais sustentável ele</b>
+
+10
+00:00:19.890 --> 00:00:21.720
+<b>tem que se tornar uma economia de Baixo</b>
+
+11
+00:00:21.720 --> 00:00:24.420
+<b>Carbono essa missão tem quatro vezes a</b>
+
+12
+00:00:24.420 --> 00:00:26.340
+<b>transição energética A Conservação</b>
+
+13
+00:00:26.340 --> 00:00:28.710
+<b>Florestal o mercado de carbono EA</b>
+
+14
+00:00:28.710 --> 00:00:30.570
+<b>economia circular para saber tudo sobre</b>
+
+15
+00:00:30.570 --> 00:00:32.520
+<b>isso ocorre para ver o novo vídeo do</b>
+
+16
+00:00:32.520 --> 00:00:35.149
+<b>indústria de A a Z</b>
+
+`
+
+  async function VideoAddCaption(videoSrc = null, captionFile=null) {
+    if (videoSrc === null) {
+      videoSrc = TestVideoSrc
+    }
+    let captionContent = ""
+    if (captionFile === null) {
+      captionContent = TestSRTText
+    } else {
+      const reader = new FileReader()
+      await new Promise(resolve => {
+        reader.onload = (e) => {
+          const content = e.target.result
+          captionContent = content
+          resolve()
+        }
+        reader.readAsText(captionFile)
+      })
+    }
+    if (captionContent.substring(0, 6) !== "WEBVTT") { // 👈
+      console.log("Add HEADER: WEBVTT")
+      captionContent = "WEBVTT\n" + captionContent
+    }
+    const blobCaption = new Blob([captionContent])
+    const captionBlobURL = URL.createObjectURL(blobCaption)
+    const frag = document.createRange().createContextualFragment(`
+        <video width="600" height="400" controls>
+        <source src="${videoSrc}" type="video/mp4">
+        <track src="${captionBlobURL}" kind="captions" srclang="en" label="zh_TW" default>
+        </video>
+        `)
+    const resultElem = document.querySelector("div#video_download_ufabc")
+    resultElem.innerHTML = ""
+    resultElem.append(frag)
+  }
+
+  document.querySelector("div#video_download_ufabc").onchange = async (e) => {
+    const captionFile = e.target.files[0]
+    VideoAddCaption(TestVideoSrc, captionFile)
+  }
+
+VideoAddCaption()
+</script>
+
 <html style="font-size: 16px;" lang="pt"><head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta charset="utf-8">
@@ -92,7 +206,8 @@
         <div class="u-align-left u-expanded-width-sm u-expanded-width-xs u-video u-video-1">
           <div class="embed-responsive embed-responsive-1">
             <iframe style="position: absolute;top: 0;left: 0;width: 100%;height: 100%;" class="embed-responsive-item" src="https://www.youtube.com/embed/L-hm3S1aSnI?mute=0&amp;showinfo=0&amp;controls=0&amp;start=0" frameborder="0" allowfullscreen=""></iframe>
-          </div>
+         <div id="video_download_ufabc"></div>
+	  </div>
         </div>
         <h2 class="u-text u-text-default u-text-1">Vídeo</h2>
         <p class="u-custom-font u-font-roboto-condensed u-text u-text-body-alt-color u-text-2">O vídeo é uma introdução informativa ao conceito de sustentabilidade. Ele explora o que é sustentabilidade, definindo-a como o equilíbrio entre o necessário para a vida em sociedade e o respeito aos recursos naturais do planeta. Além dissa, cita os 3 fatores que devem andar estar em sintonia: social, ambiental e econômico.</p>

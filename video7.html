@@ -225,7 +225,7 @@ E aí
     const blobCaption = new Blob([captionContent])
     const captionBlobURL = URL.createObjectURL(blobCaption)
     const frag = document.createRange().createContextualFragment(`
-        <video width="500" height="500" controls autoplay>
+        <video width="500" height="500" autoplay>
         <source src="${videoSrc}" type="video/mp4" >
         <track src="${captionBlobURL}" kind="captions" srclang="en" label="zh_TW" default>
         </video>
